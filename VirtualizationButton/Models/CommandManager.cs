@@ -27,12 +27,12 @@ namespace VirtualizationButton.Models
         }
         public static void EnableVirtualization()
         {
-            CommandManager.RunCommand("powershell.exe", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All");
+            CommandManager.RunCommand("powershell", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All");
             CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype auto");
         }
         public static void DisableVirtualization()
         {
-            CommandManager.RunCommand("powershell.exe", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All");
+            CommandManager.RunCommand("powershell", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All");
             CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype off");
 
         }

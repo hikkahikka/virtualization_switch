@@ -31,9 +31,9 @@ namespace VirtualizationButton.ViewModels
         }
         private static void AnalysisVirtualization(Dictionary<string, bool?> values, CommandManagerViewModel obj)
         {
-            if (values.ContainsKey("HyperVisorPresent") && values["HyperVisorPresent"] == true)
+            if (values.ContainsKey("HyperVisorPresent"))
             {
-                obj._isToggleActive = true;
+                obj._isToggleActive = values["HyperVisorPresent"]?? false;
                 return;
             }
             obj._isToggleActive = false;
