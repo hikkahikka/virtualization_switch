@@ -12,27 +12,31 @@ namespace VirtualizationButton.Models
     {
         private static void RunCommand(string fileName, string argument)
         {
-            var process = new System.Diagnostics.ProcessStartInfo
+            string outputLanguageSettingsPowershell = "[Threading.Thread]::CurrentThread.CurrentCulture = 'en-US'; [Threading.Thread]::CurrentThread.CurrentUICulture = 'en-US'; ";
+            string outputLanguageSettingsCmd = "chcp 65001 &&";
+            string fullArgument = (fileName == "cmd" ? "/c "+outputLanguageSettingsCmd : "/command "+outputLanguageSettingsPowershell)+argument;
+            ProcessStartInfo processInfo = new ProcessStartInfo
             {
                 Verb = "runas",
                 LoadUserProfile = true,
                 FileName = fileName,
-                Arguments = argument,
-                RedirectStandardOutput = false,
-                UseShellExecute = true,
+                Arguments = fullArgument,
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden
             };
-            System.Diagnostics.Process.Start(process);
+            Process? process = Process.Start(processInfo);
+            Logger.LogProcess(process);
         }
         public static void EnableVirtualization()
         {
-            CommandManager.RunCommand("powershell", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All");
+            CommandManager.RunCommand("powershell", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All -NoRestart");
             CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype auto");
         }
         public static void DisableVirtualization()
         {
-            CommandManager.RunCommand("powershell", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-All");
+            CommandManager.RunCommand("powershell", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -NoRestart");
             CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype off");
 
         }
@@ -42,7 +46,7 @@ namespace VirtualizationButton.Models
             Process process = Process.Start(new ProcessStartInfo
             {
                 FileName = "powershell",
-                Arguments = "/command Get-ComputerInfo -Property \"Hyper*\"",
+                Arguments = "Get-ComputerInfo -Property \"Hyper*\"",
                 RedirectStandardOutput = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
                 UseShellExecute = false,
