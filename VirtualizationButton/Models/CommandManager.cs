@@ -10,7 +10,7 @@ namespace VirtualizationButton.Models
 {
     public class CommandManager
     {
-        private static async Task RunCommand(string fileName, string argument, bool isLog = true)
+        private static async Task RunCommand(string fileName, string argument, bool isLog = true, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
             string outputLanguageSettingsPowershell = "[Threading.Thread]::CurrentThread.CurrentCulture = 'en-US'; [Threading.Thread]::CurrentThread.CurrentUICulture = 'en-US'; ";
             string outputLanguageSettingsCmd = "chcp 65001 &&";
@@ -27,7 +27,7 @@ namespace VirtualizationButton.Models
                 WindowStyle = ProcessWindowStyle.Hidden
             };
             Process? process = Process.Start(processInfo);
-            if(isLog) await Logger.LogProcess(process);
+            if(isLog) await Logger.LogProcess(process, memberName);
         }
         public static async void EnableVirtualization()
         {
