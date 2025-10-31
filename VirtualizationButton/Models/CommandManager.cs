@@ -10,7 +10,7 @@ namespace VirtualizationButton.Models
 {
     public class CommandManager
     {
-        private static void RunCommand(string fileName, string argument)
+        private static async Task RunCommand(string fileName, string argument, bool isLog = true)
         {
             string outputLanguageSettingsPowershell = "[Threading.Thread]::CurrentThread.CurrentCulture = 'en-US'; [Threading.Thread]::CurrentThread.CurrentUICulture = 'en-US'; ";
             string outputLanguageSettingsCmd = "chcp 65001 &&";
@@ -27,20 +27,19 @@ namespace VirtualizationButton.Models
                 WindowStyle = ProcessWindowStyle.Hidden
             };
             Process? process = Process.Start(processInfo);
-            Logger.LogProcess(process);
+            if(isLog) await Logger.LogProcess(process);
         }
-        public static void EnableVirtualization()
+        public static async void EnableVirtualization()
         {
-            CommandManager.RunCommand("powershell", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All -NoRestart");
-            CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype auto");
+            await CommandManager.RunCommand("powershell", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All -NoRestart");
+            await CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype auto");
         }
-        public static void DisableVirtualization()
+        public static async void DisableVirtualization()
         {
-            CommandManager.RunCommand("powershell", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -NoRestart");
-            CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype off");
-
+            await CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype off");
+            await CommandManager.RunCommand("powershell", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -NoRestart");
         }
-        public static void Reboot()=>CommandManager.RunCommand("cmd", "/c shutdown -r -t 3");
+        public static async void Reboot()=> await CommandManager.RunCommand("cmd", "shutdown -r -t 3", false);
         public static Dictionary<string, bool?> GetVirtualizationStatus()
         {
             Process process = Process.Start(new ProcessStartInfo
