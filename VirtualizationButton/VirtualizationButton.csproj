@@ -9,6 +9,7 @@
     <PackageIcon>icon.ico</PackageIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Description>An application for switching virtualization</Description>
+	<ApplicationIcon>Images\icon.ico</ApplicationIcon> 
   </PropertyGroup>
 
   <ItemGroup>
