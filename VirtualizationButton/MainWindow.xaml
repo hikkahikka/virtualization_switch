@@ -61,7 +61,7 @@
         </StackPanel>
         <WrapPanel Margin="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" >
             <Label Content="Enable logging" FontSize="15" Margin="5"></Label>
-            <CheckBox Margin="0 15 0 15" IsChecked="{Binding IsLogOn}"> </CheckBox>
+            <CheckBox Margin="0 15 0 15" IsChecked="{Binding IsLogOn}" Command="{Binding LogCommand}"> </CheckBox>
         </WrapPanel>
     </Grid>
 </Window>

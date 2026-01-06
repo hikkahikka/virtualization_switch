@@ -69,8 +69,20 @@ namespace VirtualizationButton.ViewModels
         public CommandManagerViewModel()
         {
             CommandManagerViewModel.AnalysisVirtualization(CommandManager.GetVirtualizationStatus(), this);
+            _isLogOn = RegistryManager.LoadFromRegistry();
         }
-
+        private RelayCommand logCommand;
+        public RelayCommand LogCommand
+        {
+            get
+            {
+                return logCommand ??
+                    (logCommand = new RelayCommand(obj =>
+                    {
+                        RegistryManager.SaveToRegistry(_isLogOn);
+                    }));
+            }
+        }
         private RelayCommand virtualizationCommand;
         public RelayCommand VirtualizationCommand
         {
