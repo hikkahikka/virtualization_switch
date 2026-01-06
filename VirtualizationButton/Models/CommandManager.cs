@@ -27,6 +27,8 @@ namespace VirtualizationButton.Models
                 WindowStyle = ProcessWindowStyle.Hidden
             };
             Process? process = Process.Start(processInfo);
+
+
             if(isLog) await Logger.LogProcess(process, memberName);
         }
         public static async void EnableVirtualization()

@@ -69,13 +69,6 @@ namespace VirtualizationButton.ViewModels
                   (virtualizationCommand = new RelayCommand(obj =>
                   {
                       const int CLICK_DELAY_SECONDS = 10;
-                      if (!_timer.IsDelayOver())
-                      {
-                          IsToggleActive = !IsToggleActive;
-                          TimeSpan timeLeft = TimeSpan.FromSeconds(CLICK_DELAY_SECONDS) - (DateTime.Now - _timer.LastClickTime);
-                          MessageBox.Show($"Wait {timeLeft.Seconds} second(s)", "Too fast!", MessageBoxButton.OK, MessageBoxImage.Error);
-                          return;
-                      }
                       _timer.LastClickTime = DateTime.Now;
                       if (IsToggleActive)
                       {
@@ -84,6 +77,11 @@ namespace VirtualizationButton.ViewModels
                       else
                       {
                           CommandManager.DisableVirtualization();
+                      }
+                      while (Logger.IsRunning != false)
+                      {
+                          TimeSpan timeLeft = TimeSpan.FromSeconds(CLICK_DELAY_SECONDS) - (DateTime.Now - _timer.LastClickTime);
+                          MessageBox.Show($"Wait {timeLeft.Seconds} second(s) to complete the operation.", "Wait", MessageBoxButton.OK);
                       }
                       var answer = MessageBox.Show("Do you want to reboot now?", "Reboot", MessageBoxButton.YesNo, MessageBoxImage.Question);
                       if (answer == MessageBoxResult.Yes)

@@ -59,5 +59,9 @@
                 </DockPanel>
             </ToggleButton>
         </StackPanel>
+        <WrapPanel Margin="30" HorizontalAlignment="Right" VerticalAlignment="Bottom" >
+            <Label Content="Enable logging" FontSize="15" Margin="5"></Label>
+            <CheckBox Margin="0 15 0 15"> </CheckBox>
+        </WrapPanel>
     </Grid>
 </Window>
