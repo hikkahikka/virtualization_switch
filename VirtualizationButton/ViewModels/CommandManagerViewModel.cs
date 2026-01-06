@@ -29,6 +29,17 @@ namespace VirtualizationButton.ViewModels
                 OnPropertyChanged(nameof(ToggleAlignment));
             }
         }
+
+        private bool _isLogOn;
+        public bool IsLogOn
+        {
+            get { return _isLogOn; }
+            set
+            {
+                _isLogOn = value;
+                OnPropertyChanged(nameof(IsLogOn));
+            }
+        }
         private static void AnalysisVirtualization(Dictionary<string, bool?> values, CommandManagerViewModel obj)
         {
             if (values.ContainsKey("HyperVisorPresent"))
@@ -69,19 +80,27 @@ namespace VirtualizationButton.ViewModels
                   (virtualizationCommand = new RelayCommand(obj =>
                   {
                       const int CLICK_DELAY_SECONDS = 10;
+                      if (!_timer.IsDelayOver())
+                      {
+                          IsToggleActive = !IsToggleActive;
+                          TimeSpan timeLeft = TimeSpan.FromSeconds(CLICK_DELAY_SECONDS) - (DateTime.Now - _timer.LastClickTime);
+                          MessageBox.Show($"Wait {timeLeft.Seconds} second(s)", "Too fast!", MessageBoxButton.OK, MessageBoxImage.Error);
+                          return;
+                      }
                       _timer.LastClickTime = DateTime.Now;
                       if (IsToggleActive)
                       {
-                          CommandManager.EnableVirtualization();
+                          CommandManager.EnableVirtualization(_isLogOn);
                       }
                       else
                       {
-                          CommandManager.DisableVirtualization();
+                          CommandManager.DisableVirtualization(_isLogOn);
                       }
+
                       while (Logger.IsRunning != false)
                       {
                           TimeSpan timeLeft = TimeSpan.FromSeconds(CLICK_DELAY_SECONDS) - (DateTime.Now - _timer.LastClickTime);
-                          MessageBox.Show($"Wait {timeLeft.Seconds} second(s) to complete the operation.", "Wait", MessageBoxButton.OK);
+                          MessageBox.Show($"Wait {timeLeft.Seconds} second(s) to complete the operation.", "Wait");
                       }
                       var answer = MessageBox.Show("Do you want to reboot now?", "Reboot", MessageBoxButton.YesNo, MessageBoxImage.Question);
                       if (answer == MessageBoxResult.Yes)

@@ -10,7 +10,7 @@ namespace VirtualizationButton.Models
 {
     public class CommandManager
     {
-        private static async Task RunCommand(string fileName, string argument, bool isLog = true, [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
+        private static async Task RunCommand(string fileName, string argument, bool isLog , [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
             string outputLanguageSettingsPowershell = "[Threading.Thread]::CurrentThread.CurrentCulture = 'en-US'; [Threading.Thread]::CurrentThread.CurrentUICulture = 'en-US'; ";
             string outputLanguageSettingsCmd = "chcp 65001 &&";
@@ -31,15 +31,15 @@ namespace VirtualizationButton.Models
 
             if(isLog) await Logger.LogProcess(process, memberName);
         }
-        public static async void EnableVirtualization()
+        public static async void EnableVirtualization(bool isLog)
         {
-            await CommandManager.RunCommand("powershell", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All -NoRestart");
-            await CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype auto");
+            await CommandManager.RunCommand("powershell", "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V –All -NoRestart", isLog);
+            await CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype auto", isLog);
         }
-        public static async void DisableVirtualization()
+        public static async void DisableVirtualization(bool isLog)
         {
-            await CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype off");
-            await CommandManager.RunCommand("powershell", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -NoRestart");
+            await CommandManager.RunCommand("cmd", "bcdedit /set hypervisorlaunchtype off", isLog);
+            await CommandManager.RunCommand("powershell", "Disable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -NoRestart", isLog);
         }
         public static async void Reboot()=> await CommandManager.RunCommand("cmd", "shutdown -r -t 3", false);
         public static Dictionary<string, bool?> GetVirtualizationStatus()
